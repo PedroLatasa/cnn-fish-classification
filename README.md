@@ -4,7 +4,7 @@ A project to classify 9 fish species using a custom CNN in PyTorch, based on the
 
 ## Citation 
 
-``` markdown
+```
 @inproceedings{ulucan2020large, 
   title={A Large-Scale Dataset for Fish Segmentation and Classification}, 
   author={Ulucan, Oguzhan and Karakaya, Diclehan and Turkan, Mehmet},

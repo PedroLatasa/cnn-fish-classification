@@ -1,14 +1,4 @@
 # main.py
-# Trabajo Final Clasificación de Peces en pesca de alta mar
-# @inproceedings{ulucan2020large,
-#  title={A Large-Scale Dataset for Fish Segmentation and Classification},
-#  author={Ulucan, Oguzhan and Karakaya, Diclehan and Turkan, Mehmet},
-#  booktitle={2020 Innovations in Intelligent Systems and Applications Conference (ASYU)},
-#  pages={1--5},
-#  year={2020},
-#  organization={IEEE}
-# }
-
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -21,30 +11,30 @@ from utils.train_utils import train_model, evaluate_model
 from utils.plot_utils import plot_metrics
 
 def main():
-    # Validar configuración
+    # Validate configuration settings
     Config.validate()
     
-    # Verificar dispositivo
-    print(f"Usando dispositivo: {Config.DEVICE}")
+    # Check and display the device being used
+    print(f"Using device: {Config.DEVICE}")
     
-    # Cargar dataset
+    # Load the fish dataset
     image_paths, labels, classes = load_fish_dataset()
     class_to_idx = {cls: idx for idx, cls in enumerate(classes)}
     
-    # Verificar número de clases
+    # Verify the number of classes
     if len(classes) != Config.NUM_CLASSES:
-        raise ValueError(f"Se esperaban {Config.NUM_CLASSES} clases, pero se encontraron {len(classes)}")
+        raise ValueError(f"Expected {Config.NUM_CLASSES} classes, but found {len(classes)}")
     
-    # Crear dataset
+    # Create the dataset with transformations
     dataset = FishDataset(image_paths, labels, class_to_idx, transform=get_transforms())
     
-    # Dividir dataset
+    # Split the dataset into train, validation, and test sets
     train_size = int(Config.TRAIN_SPLIT * len(dataset))
     val_size = int(Config.VAL_SPLIT * len(dataset))
     test_size = len(dataset) - train_size - val_size
     train_dataset, val_dataset, test_dataset = random_split(dataset, [train_size, val_size, test_size])
     
-    # Crear DataLoaders
+    # Create DataLoaders for training, validation, and testing
     train_loader = DataLoader(
         train_dataset,
         batch_size=Config.BATCH_SIZE,
@@ -63,17 +53,17 @@ def main():
         shuffle=False,
         num_workers=Config.NUM_WORKERS
     )
-    print(f"Tamaño entrenamiento: {len(train_dataset)}, validación: {len(val_dataset)}, prueba: {len(test_dataset)}")
+    print(f"Training size: {len(train_dataset)}, Validation size: {len(val_dataset)}, Test size: {len(test_dataset)}")
     
-    # Configurar modelo
+    # Initialize the model
     model = FishCNN(num_classes=Config.NUM_CLASSES)
     model.to(Config.DEVICE)
     
-    # Configurar entrenamiento
+    # Set up training components
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=Config.LEARNING_RATE)
     
-    # Entrenar y obtener métricas
+    # Train the model and collect metrics
     train_losses, val_losses, train_accuracies, val_accuracies = train_model(
         model=model,
         train_loader=train_loader,
@@ -84,15 +74,15 @@ def main():
         num_epochs=Config.NUM_EPOCHS
     )
     
-    # Evaluar en conjunto de prueba
+    # Evaluate the model on the test set
     evaluate_model(model, test_loader, Config.DEVICE)
     
-    # Graficar métricas
+    # Plot training and validation metrics
     plot_metrics(train_losses, val_losses, train_accuracies, val_accuracies)
     
-    # Guardar modelo final
+    # Save the final model
     torch.save(model.state_dict(), Config.MODEL_SAVE_PATH)
-    print(f"Modelo final guardado en {Config.MODEL_SAVE_PATH}")
+    print(f"Final model saved at {Config.MODEL_SAVE_PATH}")
 
 if __name__ == "__main__":
     main()

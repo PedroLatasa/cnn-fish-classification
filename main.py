@@ -93,8 +93,6 @@ def main():
     # Guardar modelo final
     torch.save(model.state_dict(), Config.MODEL_SAVE_PATH)
     print(f"Modelo final guardado en {Config.MODEL_SAVE_PATH}")
-    
-    print('Cambios realizados')
 
 if __name__ == "__main__":
     main()

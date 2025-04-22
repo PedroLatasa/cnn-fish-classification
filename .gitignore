@@ -1,0 +1,12 @@
+# Archivos de Python compilados
+__pycache__/
+*.pyc
+
+# Archivos de checkpoints y logs
+checkpoints/
+*.log
+*.pth
+*.png
+
+# Otros archivos generados
+*.ipynb_checkpoints/

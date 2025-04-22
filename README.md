@@ -1,25 +1,28 @@
-# Clasificación de Peces en Pesca de Alta Mar
+# Fish Classification in High-Seas Fishing 
 
-Proyecto para clasificar 9 especies de peces usando una CNN personalizada en PyTorch, basado en el dataset "A Large Scale Fish Dataset".
+A project to classify 9 fish species using a custom CNN in PyTorch, based on the "A Large Scale Fish Dataset". 
 
-## Cita
-@inproceedings{ulucan2020large,
-  title={A Large-Scale Dataset for Fish Segmentation and Classification},
+## Citation 
+
+@inproceedings{ulucan2020large, 
+  title={A Large-Scale Dataset for Fish Segmentation and Classification}, 
   author={Ulucan, Oguzhan and Karakaya, Diclehan and Turkan, Mehmet},
-  booktitle={2020 Innovations in Intelligent Systems and Applications Conference (ASYU)},
-  pages={1--5},
-  year={2020},
-  organization={IEEE}
-}
+  booktitle={2020 Innovations in Intelligent Systems and Applications Conference (ASYU)}, 
+  pages={1--5}, 
+  year={2020}, 
+  organization={IEEE} 
+} 
 
-## Instalación
-1. Clona el repositorio.
-2. Crea un entorno virtual: `python -m venv venv`
-3. Activa el entorno: `venv\Scripts\activate` (Windows) o `source venv/bin/activate` (Linux/Mac)
-4. Instala dependencias: `pip install -r requirements.txt`
-5. Configura `kaggle.json` en `C:\Users\<TuUsuario>\.kaggle\`.
+## Installation 
 
-## Ejecución
-Ejecuta el script principal:
-```bash
-python main.py
+1. Clone the repository: ```bash git clone cd ``` 
+
+2. Create the Conda environment using the `environment.yml` file: ```bash conda env create -f environment.yml ``` 
+
+3. Activate the environment: ```bash conda activate fish_classification ``` 
+
+4. Configure `kaggle.json` in `~/.kaggle/kaggle.json` (Linux/Mac) or `C:\Users\\.kaggle\kaggle.json` (Windows). 
+
+## Execution Run the main script: 
+
+```bash python main.py ```

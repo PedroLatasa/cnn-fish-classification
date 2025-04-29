@@ -46,15 +46,15 @@ class Config:
     TEST_SPLIT: float = 0.15
 
     # --- DataLoader Settings ---
-    BATCH_SIZE: int = 32
+    BATCH_SIZE: int = 64
     NUM_WORKERS: int = 0  # Set to 0 for Windows to avoid multiprocessing issues
 
     # --- Training Settings ---
-    NUM_EPOCHS: int = 15  # Reduced for initial training
-    LEARNING_RATE: float = 0.001
-    FINE_TUNE_EPOCHS: int = 10
+    NUM_EPOCHS: int = 12  # Reduced for initial training
+    LEARNING_RATE: float = 5e-4
+    FINE_TUNE_EPOCHS: int = 6
     FINE_TUNE_LR: float = 5e-5
-    PATIENCE: int = 3
+    PATIENCE: int = 5
     DEVICE: str = "cuda" if torch.cuda.is_available() else "cpu"
 
     # --- Directories and Files ---

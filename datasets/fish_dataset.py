@@ -70,18 +70,33 @@ class FishDataset(Dataset):
             image = self.transform(image)
         return image, label_idx
 
-def get_transforms() -> transforms.Compose:
+def get_transforms(train: bool = False) -> transforms.Compose:
     """Returns the transformations for the fish dataset.
 
-    The transformations include resizing to the configured image size, converting
-    to a tensor, and normalizing with ImageNet mean and standard deviation.
+    For training, includes data augmentation and IMAGENET1K_V2 preprocessing.
+    For validation/testing, includes only IMAGENET1K_V2 preprocessing.
+
+    Args:
+        train (bool): Whether to include data augmentation for training.
 
     Returns:
         transforms.Compose: A composition of image transformations.
     """
-    return transforms.Compose([
-        transforms.Resize(Config.IMAGE_SIZE),  # Resize to configured size
-        transforms.ToTensor(),  # Convert to tensor
-        transforms.Normalize(mean=Config.NORMALIZE_MEAN, std=Config.NORMALIZE_STD)  # Normalize
-    ])
-    
+    if train:
+        return transforms.Compose([
+            transforms.Resize(255, interpolation=transforms.InterpolationMode.BILINEAR),
+            transforms.RandomCrop(240),
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomRotation(20),
+            transforms.RandomAffine(degrees=0, translate=(0.1, 0.1)),
+            transforms.ColorJitter(brightness=0.2, contrast=0.2),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=Config.NORMALIZE_MEAN, std=Config.NORMALIZE_STD)
+        ])
+    else:
+        return transforms.Compose([
+            transforms.Resize(255, interpolation=transforms.InterpolationMode.BILINEAR),
+            transforms.CenterCrop(240),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=Config.NORMALIZE_MEAN, std=Config.NORMALIZE_STD)
+        ])

@@ -7,7 +7,7 @@ class Config:
     """Configuration settings for the fish classification project.
 
     This class defines all hyperparameters, dataset paths, and model settings
-    required for training and evaluating the FishCNN model on the A Large Scale
+    required for training and evaluating the EfficientNetB1 model on the A Large Scale
     Fish Dataset. All attributes are class-level constants, and the class provides
     a static method to validate their consistency.
 
@@ -22,8 +22,10 @@ class Config:
         TEST_SPLIT (float): Proportion of the dataset for testing.
         BATCH_SIZE (int): Number of samples per batch in DataLoader.
         NUM_WORKERS (int): Number of subprocesses for data loading (0 for Windows compatibility).
-        NUM_EPOCHS (int): Number of training epochs.
-        LEARNING_RATE (float): Learning rate for the optimizer.
+        NUM_EPOCHS (int): Number of training epochs for initial training.
+        LEARNING_RATE (float): Learning rate for the optimizer during initial training.
+        FINE_TUNE_EPOCHS (int): Number of epochs for fine-tuning.
+        FINE_TUNE_LR (float): Learning rate for fine-tuning.
         PATIENCE (int): Number of epochs to wait before early stopping.
         DEVICE (str): Device for model training ('cuda' if available, else 'cpu').
         CHECKPOINT_DIR (str): Directory to save model checkpoints.
@@ -37,7 +39,7 @@ class Config:
     DATASET_SUBDIR: str = "Fish_Dataset/Fish_Dataset"
     USE_AUGMENTED: bool = True  # Use augmented Fish_Dataset (True) or NA_Fish_Dataset (False)
     NUM_CLASSES: int = 9
-    IMAGE_SIZE: Tuple[int, int] = (224, 224)
+    IMAGE_SIZE: Tuple[int, int] = (240, 240)  # Matches EfficientNetB1 IMAGENET1K_V2 crop_size
     TRAIN_SPLIT: float = 0.7
     VAL_SPLIT: float = 0.15
     TEST_SPLIT: float = 0.15
@@ -47,16 +49,18 @@ class Config:
     NUM_WORKERS: int = 0  # Set to 0 for Windows to avoid multiprocessing issues
 
     # --- Training Settings ---
-    NUM_EPOCHS: int = 10
+    NUM_EPOCHS: int = 5  # Reduced for initial training
     LEARNING_RATE: float = 0.001
+    FINE_TUNE_EPOCHS: int = 5
+    FINE_TUNE_LR: float = 1e-5
     PATIENCE: int = 3
     DEVICE: str = "cuda" if torch.cuda.is_available() else "cpu"
 
     # --- Directories and Files ---
     CHECKPOINT_DIR: str = "checkpoints"
-    MODEL_SAVE_PATH: str = os.path.join(CHECKPOINT_DIR, "final_model.pth")
+    MODEL_SAVE_PATH: str = os.path.join(CHECKPOINT_DIR, "efficientnetb1_final_model.pth")
     
-    # --- Normalization (ImageNet standard values) ---
+    # --- Normalization (ImageNet standard values for EfficientNetB1 IMAGENET1K_V2) ---
     NORMALIZE_MEAN: Tuple[float, float, float] = (0.485, 0.456, 0.406)
     NORMALIZE_STD: Tuple[float, float, float] = (0.229, 0.224, 0.225)
 
@@ -76,5 +80,6 @@ class Config:
         assert Config.NUM_CLASSES > 0, "NUM_CLASSES must be positive"
         assert Config.BATCH_SIZE > 0, "BATCH_SIZE must be positive"
         assert Config.NUM_EPOCHS > 0, "NUM_EPOCHS must be positive"
+        assert Config.FINE_TUNE_EPOCHS > 0, "FINE_TUNE_EPOCHS must be positive"
         assert Config.PATIENCE >= 0, "PATIENCE must be non-negative"
         os.makedirs(Config.CHECKPOINT_DIR, exist_ok=True)

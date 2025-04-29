@@ -1,4 +1,5 @@
 # utils/train_utils.py
+import os
 import torch
 from typing import List, Tuple
 from tqdm import tqdm
@@ -16,8 +17,8 @@ def train_model(
     """Trains the model and evaluates it on the validation set for each epoch.
 
     This function performs training over the specified number of epochs, computing
-    loss and accuracy for both training and validation datasets. It uses a progress
-    bar to display training progress and prints metrics for each epoch.
+    loss and accuracy for both training and validation datasets. It includes early stopping
+    based on validation loss and uses a progress bar to display training progress.
 
     Args:
         model (torch.nn.Module): The neural network model to train.
@@ -40,6 +41,10 @@ def train_model(
     val_losses: List[float] = []
     train_accuracies: List[float] = []
     val_accuracies: List[float] = []
+    
+    # Early stopping variables
+    best_val_loss = float('inf')
+    patience_counter = 0
 
     # Training loop over epochs
     for epoch in range(num_epochs):
@@ -101,6 +106,18 @@ def train_model(
         # Print epoch metrics
         print(f"Epoch {epoch+1}: Train Loss: {train_loss:.4f}, Train Acc: {train_accuracy:.2f}%, "
               f"Val Loss: {val_loss:.4f}, Val Acc: {val_accuracy:.2f}%")
+        
+        # Early stopping check
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            patience_counter = 0
+            # Save best model
+            torch.save(model.state_dict(), os.path.join(Config.CHECKPOINT_DIR, "best_model.pth"))
+        else:
+            patience_counter += 1
+            if patience_counter >= Config.PATIENCE:
+                print(f"Early stopping triggered after epoch {epoch+1}")
+                break
 
     return train_losses, val_losses, train_accuracies, val_accuracies
 
@@ -122,7 +139,8 @@ def evaluate_model(
     Returns:
         None: Prints the test accuracy to the console.
     """
-    # Set model to evaluation mode
+    # Load best model for evaluation
+    model.load_state_dict(torch.load(os.path.join(Config.CHECKPOINT_DIR, "best_model.pth")))
     model.eval()
     test_correct: int = 0
     test_total: int = 0

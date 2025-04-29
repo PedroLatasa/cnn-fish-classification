@@ -47,7 +47,7 @@ class Config:
 
     # --- DataLoader Settings ---
     BATCH_SIZE: int = 64
-    NUM_WORKERS: int = 0  # Set to 0 for Windows to avoid multiprocessing issues
+    NUM_WORKERS: int = 4  # Set to 0 for Windows to avoid multiprocessing issues
 
     # --- Training Settings ---
     NUM_EPOCHS: int = 12  # Reduced for initial training

@@ -1,4 +1,6 @@
 # requirements.txt
+torch
+torchvision
 numpy
 pandas
 tqdm

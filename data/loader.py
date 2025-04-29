@@ -19,7 +19,9 @@ def load_fish_dataset() -> Tuple[List[str], List[str], List[str]]:
             - classes: List of unique class names.
     """
     # Download the dataset from Kaggle
-    path = kagglehub.dataset_download(Config.DATASET_PATH)
+    # for local execution
+    # path = kagglehub.dataset_download(Config.DATASET_PATH) 
+    path = Config.DATASET_PATH # for kaggle execution GPU
     print("Path to dataset files:", path)
 
     # Select subdirectory based on whether augmented dataset is used

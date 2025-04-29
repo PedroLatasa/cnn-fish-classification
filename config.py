@@ -36,8 +36,8 @@ class Config:
 
     # --- Dataset Settings ---
     # config.py
-    DATASET_PATH: str = "/kaggle/input/a-large-scale-fish-dataset/"
-    DATASET_SUBDIR: str = "Fish_Dataset/Fish_Dataset"
+    DATASET_PATH: str = "/kaggle/input/a-large-scale-fish-dataset/Fish_Dataset/Fish_Dataset"
+    DATASET_SUBDIR: str = ""
     USE_AUGMENTED: bool = True  # Use augmented Fish_Dataset (True) or NA_Fish_Dataset (False)
     NUM_CLASSES: int = 9
     IMAGE_SIZE: Tuple[int, int] = (240, 240)  # Matches EfficientNetB1 IMAGENET1K_V2 crop_size

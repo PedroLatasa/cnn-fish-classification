@@ -1,3 +1,4 @@
+# utils/train_utils
 import os
 import torch
 from typing import List, Tuple
@@ -6,6 +7,7 @@ from config import Config
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
 import matplotlib.pyplot as plt
+from torchmetrics import AUROC
 
 def train_model(
     model: torch.nn.Module,
@@ -15,11 +17,11 @@ def train_model(
     optimizer: torch.optim.Optimizer,
     device: str,
     num_epochs: int = Config.NUM_EPOCHS
-) -> Tuple[List[float], List[float], List[float], List[float]]:
+) -> Tuple[List[float], List[float], List[float], List[float], List[float]]:
     """Trains the model and evaluates it on the validation set for each epoch.
 
     This function performs training over the specified number of epochs, computing
-    loss and accuracy for both training and validation datasets. It includes early stopping
+    loss, accuracy, and AUC for both training and validation datasets. It includes early stopping
     based on validation loss and uses a progress bar to display training progress.
 
     Args:
@@ -32,17 +34,22 @@ def train_model(
         num_epochs (int, optional): Number of training epochs. Defaults to Config.NUM_EPOCHS.
 
     Returns:
-        Tuple[List[float], List[float], List[float], List[float]]: A tuple containing:
+        Tuple[List[float], List[float], List[float], List[float], List[float]]: A tuple containing:
             - train_losses: List of average training losses per epoch.
             - val_losses: List of average validation losses per epoch.
             - train_accuracies: List of training accuracies per epoch (percentage).
             - val_accuracies: List of validation accuracies per epoch (percentage).
+            - val_aurocs: List of validation AUC scores per epoch.
     """
     # Initialize lists to store metrics
     train_losses: List[float] = []
     val_losses: List[float] = []
     train_accuracies: List[float] = []
     val_accuracies: List[float] = []
+    val_aurocs: List[float] = []
+    
+    # Initialize AUROC metric
+    auroc = AUROC(num_classes=Config.NUM_CLASSES, average='macro', task='multiclass').to(device)
     
     # Early stopping variables
     best_val_loss = float('inf')
@@ -84,6 +91,8 @@ def train_model(
         val_loss: float = 0.0
         val_correct: int = 0
         val_total: int = 0
+        all_preds: List[torch.Tensor] = []
+        all_labels: List[torch.Tensor] = []
 
         # Evaluate on the validation dataset
         with torch.no_grad():
@@ -98,6 +107,9 @@ def train_model(
                 _, predicted = torch.max(outputs, 1)
                 val_total += labels.size(0)
                 val_correct += (predicted == labels).sum().item()
+                # Collect predictions and labels for AUC
+                all_preds.append(outputs.softmax(dim=1))
+                all_labels.append(labels)
 
         # Compute average validation loss and accuracy
         val_accuracy = 100 * val_correct / val_total
@@ -105,9 +117,15 @@ def train_model(
         val_losses.append(val_loss)
         val_accuracies.append(val_accuracy)
 
+        # Compute AUC
+        all_preds = torch.cat(all_preds, dim=0)
+        all_labels = torch.cat(all_labels, dim=0)
+        val_auc = auroc(all_preds, all_labels).item()
+        val_aurocs.append(val_auc)
+
         # Print epoch metrics
         print(f"Epoch {epoch+1}: Train Loss: {train_loss:.4f}, Train Acc: {train_accuracy:.2f}%, "
-              f"Val Loss: {val_loss:.4f}, Val Acc: {val_accuracy:.2f}%")
+              f"Val Loss: {val_loss:.4f}, Val Acc: {val_accuracy:.2f}%, Val AUC: {val_auc:.4f}")
         
         # Early stopping check
         if val_loss < best_val_loss:
@@ -121,7 +139,7 @@ def train_model(
                 print(f"Early stopping triggered after epoch {epoch+1}")
                 break
 
-    return train_losses, val_losses, train_accuracies, val_accuracies
+    return train_losses, val_losses, train_accuracies, val_accuracies, val_aurocs
 
 def evaluate_model(
     model: torch.nn.Module,

@@ -23,7 +23,7 @@ A project to classify 9 fish species using a custom CNN in PyTorch, based on the
 
 3. Activate the environment: ```bash conda activate fish_classification ``` 
 
-4. Configure `kaggle.json` in `~/.kaggle/kaggle.json` (Linux/Mac) or `C:\Users\\.kaggle\kaggle.json` (Windows). 
+4. Configure `kaggle.json` in `~/.kaggle/kaggle.json` (Linux/Mac) or `C:\Users/.kaggle\kaggle.json` (Windows). 
 
 ## Execution Run the main script: 
 

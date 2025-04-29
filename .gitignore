@@ -10,3 +10,4 @@ checkpoints/
 
 # Otros archivos generados
 *.ipynb_checkpoints/
+!*/__init__.py

@@ -1,5 +1,11 @@
 # requirements.txt
-numpy>=1.24.0
-matplotlib>=3.7.0
-tqdm>=4.65.0
-pillow>=9.4.0
+torch
+torchvision
+numpy
+pandas
+tqdm
+matplotlib
+pillow
+scikit-learn
+seaborn
+torchmetrics

@@ -1,19 +1,19 @@
-# environment.yml
 name: fish_classification
 channels:
   - pytorch
   - conda-forge
   - defaults
 dependencies:
-  - python=3.9
-  - pytorch
-  - torchvision
-  - opencv
+  - python=3.11
+  - pytorch=2.5.1
+  - torchvision=0.20.1
   - numpy
+  - pandas
   - tqdm
-  - scikit-learn
   - matplotlib
-  - pillow
+  - scikit-learn
+  - seaborn
+  - torchmetrics
   - pip
   - pip:
-      - kagglehub
+      - kaggle

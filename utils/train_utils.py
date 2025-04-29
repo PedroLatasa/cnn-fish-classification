@@ -1,9 +1,11 @@
-# utils/train_utils.py
 import os
 import torch
 from typing import List, Tuple
 from tqdm import tqdm
 from config import Config
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 def train_model(
     model: torch.nn.Module,
@@ -124,26 +126,30 @@ def train_model(
 def evaluate_model(
     model: torch.nn.Module,
     test_loader: torch.utils.data.DataLoader,
-    device: str
+    device: str,
+    classes: List[str]
 ) -> None:
-    """Evaluates the model on the test dataset and prints the accuracy.
+    """Evaluates the model on the test dataset, prints the accuracy, and plots the confusion matrix.
 
-    This function computes the classification accuracy on the test dataset using
-    a progress bar to display evaluation progress.
+    This function computes the classification accuracy on the test dataset and generates
+    a confusion matrix to visualize the model's performance across all classes.
 
     Args:
         model (torch.nn.Module): The neural network model to evaluate.
         test_loader (torch.utils.data.DataLoader): DataLoader for the test dataset.
         device (str): Device to run the model on ('cuda' or 'cpu').
+        classes (List[str]): List of class names for the confusion matrix.
 
     Returns:
-        None: Prints the test accuracy to the console.
+        None: Prints the test accuracy and displays the confusion matrix.
     """
     # Load best model for evaluation
-    model.load_state_dict(torch.load(os.path.join(Config.CHECKPOINT_DIR, "best_model.pth")))
+    model.load_state_dict(torch.load(os.path.join(Config.CHECKPOINT_DIR, "best_model.pth"), weights_only=True))
     model.eval()
     test_correct: int = 0
     test_total: int = 0
+    all_preds: List[int] = []
+    all_labels: List[int] = []
 
     # Evaluate on the test dataset
     with torch.no_grad():
@@ -156,7 +162,19 @@ def evaluate_model(
             _, predicted = torch.max(outputs, 1)
             test_total += labels.size(0)
             test_correct += (predicted == labels).sum().item()
+            # Collect predictions and labels for confusion matrix
+            all_preds.extend(predicted.cpu().numpy())
+            all_labels.extend(labels.cpu().numpy())
 
     # Compute and print test accuracy
     test_accuracy = 100 * test_correct / test_total
     print(f"Test Accuracy: {test_accuracy:.2f}%")
+
+    # Compute and plot confusion matrix
+    cm = confusion_matrix(all_labels, all_preds)
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=classes, yticklabels=classes)
+    plt.title('Confusion Matrix')
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.show()

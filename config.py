@@ -50,10 +50,10 @@ class Config:
     NUM_WORKERS: int = 0  # Set to 0 for Windows to avoid multiprocessing issues
 
     # --- Training Settings ---
-    NUM_EPOCHS: int = 5  # Reduced for initial training
+    NUM_EPOCHS: int = 15  # Reduced for initial training
     LEARNING_RATE: float = 0.001
-    FINE_TUNE_EPOCHS: int = 5
-    FINE_TUNE_LR: float = 1e-5
+    FINE_TUNE_EPOCHS: int = 10
+    FINE_TUNE_LR: float = 5e-5
     PATIENCE: int = 3
     DEVICE: str = "cuda" if torch.cuda.is_available() else "cpu"
 

@@ -55,7 +55,7 @@ class Config:
     # --- Directories and Files ---
     CHECKPOINT_DIR: str = "checkpoints"
     MODEL_SAVE_PATH: str = os.path.join(CHECKPOINT_DIR, "final_model.pth")
-
+    
     # --- Normalization (ImageNet standard values) ---
     NORMALIZE_MEAN: Tuple[float, float, float] = (0.485, 0.456, 0.406)
     NORMALIZE_STD: Tuple[float, float, float] = (0.229, 0.224, 0.225)

@@ -35,7 +35,8 @@ class Config:
     """
 
     # --- Dataset Settings ---
-    DATASET_PATH: str = "crowww/a-large-scale-fish-dataset"
+    # config.py
+    DATASET_PATH = "/kaggle/input/a-large-scale-fish-dataset/Fish_Dataset/Fish_Dataset"
     DATASET_SUBDIR: str = "Fish_Dataset/Fish_Dataset"
     USE_AUGMENTED: bool = True  # Use augmented Fish_Dataset (True) or NA_Fish_Dataset (False)
     NUM_CLASSES: int = 9
@@ -57,8 +58,8 @@ class Config:
     DEVICE: str = "cuda" if torch.cuda.is_available() else "cpu"
 
     # --- Directories and Files ---
-    CHECKPOINT_DIR: str = "checkpoints"
-    MODEL_SAVE_PATH: str = os.path.join(CHECKPOINT_DIR, "efficientnetb1_final_model.pth")
+    CHECKPOINT_DIR = "/kaggle/working/checkpoints"
+    MODEL_SAVE_PATH = os.path.join(CHECKPOINT_DIR, "efficientnetb1_final_model.pth")
     
     # --- Normalization (ImageNet standard values for EfficientNetB1 IMAGENET1K_V2) ---
     NORMALIZE_MEAN: Tuple[float, float, float] = (0.485, 0.456, 0.406)

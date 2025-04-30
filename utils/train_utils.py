@@ -1,6 +1,7 @@
 # utils/train_utils
 import os
 import torch
+import logging
 from typing import List, Tuple
 from tqdm import tqdm
 from config import Config
@@ -159,7 +160,7 @@ def evaluate_model(
         classes (List[str]): List of class names for the confusion matrix.
 
     Returns:
-        None: Prints the test accuracy and displays the confusion matrix.
+        None: Prints the test accuracy, displays the confusion matrix, and saves it to /kaggle/working/plots/.
     """
     # Load best model for evaluation
     model.load_state_dict(torch.load(os.path.join(Config.CHECKPOINT_DIR, "best_model.pth"), weights_only=True))
@@ -188,6 +189,9 @@ def evaluate_model(
     test_accuracy = 100 * test_correct / test_total
     print(f"Test Accuracy: {test_accuracy:.2f}%")
 
+    # Create plots directory
+    os.makedirs(Config.PLOTS_DIR, exist_ok=True)
+
     # Compute and plot confusion matrix
     cm = confusion_matrix(all_labels, all_preds)
     plt.figure(figsize=(10, 8))
@@ -195,4 +199,17 @@ def evaluate_model(
     plt.title('Confusion Matrix')
     plt.xlabel('Predicted')
     plt.ylabel('True')
-    plt.show()
+    
+    # Save the plot
+    cm_plot_path = os.path.join(Config.PLOTS_DIR, "confusion_matrix.png")
+    plt.savefig(cm_plot_path, dpi=300, bbox_inches='tight')
+    logging.info(f"Confusion matrix plot saved at {cm_plot_path}")
+    
+    # List files in plots directory
+    logging.info("Files in /kaggle/working/plots/:")
+    logging.info(os.listdir(Config.PLOTS_DIR))
+    
+    # Display plot only if configured
+    if Config.DISPLAY_PLOTS:
+        plt.show()
+    plt.close()

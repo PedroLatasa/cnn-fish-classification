@@ -1,5 +1,6 @@
 # data/loader.py
-import kagglehub
+# import kagglehub
+import logging
 import os
 from typing import List, Tuple
 from tqdm import tqdm
@@ -22,7 +23,7 @@ def load_fish_dataset() -> Tuple[List[str], List[str], List[str]]:
     # for local execution
     # path = kagglehub.dataset_download(Config.DATASET_PATH) 
     path = Config.DATASET_PATH # for kaggle execution GPU
-    print("Path to dataset files:", path)
+    logging.info(f"Loading dataset from: {path}")
 
     # Select subdirectory based on whether augmented dataset is used
     dataset_subdir = Config.DATASET_SUBDIR if Config.USE_AUGMENTED else "NA_Fish_Dataset"
@@ -56,5 +57,5 @@ def load_fish_dataset() -> Tuple[List[str], List[str], List[str]]:
                 image_paths.append(img_path)
                 labels.append(cls)
 
-    print(f"Total images loaded: {len(image_paths)}")
+    logging.info(f"Total images loaded: {len(image_paths)}")
     return image_paths, labels, classes

@@ -1,9 +1,11 @@
 # main.py
 import argparse
+import logging
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, random_split
+from utils.logger import setup_logger
 from config import Config
 from data.loader import load_fish_dataset
 from datasets.fish_dataset import FishDataset, get_transforms
@@ -13,11 +15,20 @@ from utils.plot_utils import plot_metrics
 import os
 
 def main():
+    # Initialize logger
+    logger = setup_logger("/kaggle/working/logs/training.log")
+    logger.info("Starting fish classification training pipeline")
+    
     # Validate configuration settings
     Config.validate()
     
     # Check and display the device being used
     print(f"Using device: {Config.DEVICE}")
+    
+    # Show which GPU is using
+    if Config.DEVICE == "cuda":
+        print(f"GPU Name: {torch.cuda.get_device_name(0)}")
+        print(f"Number of GPUs: {torch.cuda.device_count()}")
     
     # Load the fish dataset
     image_paths, labels, classes = load_fish_dataset()

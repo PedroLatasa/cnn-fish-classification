@@ -1,5 +1,6 @@
 # Fish Classification in High-Seas Fishing
 This repository contains code for classifying 9 fish species using a fine-tuned **EfficientNetB1** model in PyTorch, based on the ["A Large Scale Fish Dataset"](https://www.kaggle.com/datasets/crowww/a-large-scale-fish-dataset). Using transfer learning, the model achieves high accuracy for marine biology and fishing applications. 
+
 You can also check the kaggle notebook we made for execution: (https://www.kaggle.com/code/pedromaralatasa/cnn-fish-classification)
 
 
